@@ -1,6 +1,64 @@
+/* Discussed with Alex Beals as I am not very good with CSS and he was able
+to replicate the note that was shown in the example fairly well
+*/
 body {
   font-family: "Roboto", sans-serif;
   color: rgb(10%, 10%, 10%);
   background: darken(white, 10%);
   margin: 50px;
+}
+
+#add-bar {
+  margin-bottom: 20px;
+  display: flex;
+
+  input {
+    width: 60%;
+    font-size: 1.5em;
+    border-radius: .25em;
+  }
+  button {
+    height: 30px;
+  }
+}
+
+.note {
+	display: inline-flex;
+	flex-direction: column;
+	min-width: 150px;
+	min-height: 125px;
+
+	background-color: white;
+	border: 1px solid gray;
+	border-radius: 3px;
+	padding: 5px;
+
+	box-shadow: 3px 3px 5px rgba(0,0,0,.3);
+
+	.navbar {
+		margin-bottom: 8px;
+		flex: 0;
+		user-select: none;
+		font-size: 1.3em;
+
+		display: flex;
+		justify-content: space-between;
+
+		padding-bottom: 3px;
+		border-bottom: 1px solid black;
+	}
+
+	i {
+		margin-left: 5px;
+	}
+
+	textarea {
+		min-height: 89px;
+	}
+
+	.content {
+		p {
+			margin-top: 0px;
+		}
+	}
 }
