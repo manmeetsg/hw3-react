@@ -19,22 +19,21 @@ class Note extends Component {
     this.editClick = this.editClick.bind(this);
     this.drag = this.drag.bind(this);
   }
+  deleteClick(event) {
+    this.props.delete();
+  }
 
   inputChange(event) {
     this.setState({ text: event.target.value });
   }
 
-  deleteClick(event) {
-    this.props.delete();
+  drag(event, ui) {
+    this.props.updatePosition(ui.x, ui.y);
   }
 
   editClick(event) {
     this.props.updateContent(this.state.text);
     this.setState({ editing: !this.state.editing });
-  }
-
-  drag(event, ui) {
-    this.props.updatePosition(ui.x, ui.y);
   }
 
   editButtonRender() {
@@ -44,6 +43,7 @@ class Note extends Component {
       return <i onClick={this.editClick} className="fa fa-pencil" />;
     }
   }
+
   contentRender() {
     if (this.state.editing) {
       return (
@@ -55,7 +55,7 @@ class Note extends Component {
       return <div className="content" dangerouslySetInnerHTML={{ __html: marked(this.state.text) }} />;
     }
   }
-  // Modified from code given on website
+  // Modified from code given on website, discussed with Alex Beals
   render() {
     return (
       <Draggable

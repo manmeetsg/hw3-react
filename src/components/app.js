@@ -19,7 +19,7 @@ class App extends Component {
           zIndex: 0,
         },
         1: {
-          title: 'Welcome!',
+          title: 'Welcome to your note board!',
           text: '![](https://media.giphy.com/media/ASd0Ukj0y3qMM/giphy.gif)',
           x: 80,
           y: 60,
@@ -62,7 +62,7 @@ class App extends Component {
     });
   }
 
-  allNotes() {
+  totalNotes() {
     return this.state.notes.map((key, value) => {
       return <Note note={key} delete={() => this.deleteNote(value)} updatePosition={(x, y) => this.updatePosition(x, y, value)} updateContent={(text) => this.updateContent(text, value)} />;
     });
@@ -72,7 +72,7 @@ class App extends Component {
     return (
       <div>
         <AddBar create={(title) => this.createNote(title)} />
-        {this.allNotes()}
+        {this.totalNotes()}
       </div>
       );
   }
