@@ -24,7 +24,8 @@ class Note extends Component {
   }
 
   inputChange(event) {
-    this.setState({ text: event.target.value });
+    // this.setState({ text: event.target.value });
+    this.props.updateContent(event.target.value);
   }
 
   drag(event, ui) {
@@ -32,7 +33,8 @@ class Note extends Component {
   }
 
   editClick(event) {
-    this.props.updateContent(this.state.text);
+    this.props.updateEditing(!this.props.note.editing);
+    // this.props.updateContent(this.state.text);
     this.setState({ editing: !this.state.editing });
   }
 
@@ -48,11 +50,11 @@ class Note extends Component {
     if (this.state.editing) {
       return (
         <div className="content">
-          <Textarea onChange={this.inputChange} value={this.state.text} />
+          <Textarea onChange={this.inputChange} value={this.props.note.text} />
         </div>
       );
     } else {
-      return <div className="content" dangerouslySetInnerHTML={{ __html: marked(this.state.text) }} />;
+      return <div className="content" dangerouslySetInnerHTML={{ __html: marked(this.props.note.text) }} />;
     }
   }
   // Modified from code given on website, discussed with Alex Beals

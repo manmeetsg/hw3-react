@@ -2,69 +2,76 @@ import React, { Component } from 'react';
 import Immutable from 'immutable';
 import Note from './note';
 import AddBar from './addbar';
+import firebasedb from './firebase';
+
 // Discussed with Alex Beals
 // App component that holds the map of notes and passes down props to render
-// them
+// them, now with added firebase capability
 class App extends Component {
   constructor(props) {
     super(props);
     // init component state here
     this.state = {
-      notes: Immutable.Map({
-        0: {
-          title: 'Title',
-          text: '### __Put your text here!__',
-          x: 0,
-          y: 0,
-          zIndex: 0,
-        },
-        1: {
-          title: 'Welcome to your note board!',
-          text: '![](https://media.giphy.com/media/ASd0Ukj0y3qMM/giphy.gif)',
-          x: 80,
-          y: 60,
-          zIndex: 1,
-        },
-      }),
-      id: 2,
+      notes: Immutable.Map(),
+      zIndex: 0,
     };
   }
 
+  // Fetch the notes and initialize our board
+  componentDidMount() {
+    firebasedb.fetchNotes((snapshot) => {
+      if (this.state.notes.size === 0 && snapshot.val()) {
+        this.setState({
+          notes: Immutable.Map(snapshot.val()),
+          zIndex: Object.keys(snapshot.val()).length,
+        });
+      } else {
+        this.setState({
+          notes: Immutable.Map(snapshot.val()),
+        });
+      }
+    });
+  }
+
   createNote(title) {
-    // Create a note and add it to the map initialized in the constructor
+    // Create a note and add it to the firebase database
+    firebasedb.addNote({
+      title,
+      text: 'text',
+      x: 0,
+      y: 0,
+      zIndex: this.state.zIndex + 1,
+      editing: false,
+    });
     this.setState({
-      notes: this.state.notes.set(this.state.id, {
-        title,
-        text: 'text',
-        x: 0,
-        y: 0,
-        zIndex: 0,
-      }),
-      // Increment the id number after we make the note
-      id: this.state.id + 1,
+      zIndex: this.state.zIndex + 1,
     });
   }
 
   deleteNote(id) {
-    this.setState({
-      notes: this.state.notes.delete(id),
-    });
+    firebasedb.deleteNote(id);
   }
   updatePosition(x, y, id) {
-    this.setState({
-      notes: this.state.notes.update(id, (n) => { return Object.assign({}, n, { x, y }); }),
-    });
+    firebasedb.updatePosition(x, y, id);
   }
 
   updateContent(text, id) {
-    this.setState({
-      notes: this.state.notes.update(id, (n) => { return Object.assign({}, n, { text }); }),
-    });
+    firebasedb.updateContent(text, id);
+  }
+
+  updateEditing(editing, id) {
+    firebasedb.updateEditing(editing, id);
   }
 
   totalNotes() {
-    return this.state.notes.map((key, value) => {
-      return <Note note={key} delete={() => this.deleteNote(value)} updatePosition={(x, y) => this.updatePosition(x, y, value)} updateContent={(text) => this.updateContent(text, value)} />;
+    return this.state.notes.map((note, id) => {
+      return (<Note
+        note={note}
+        delete={() => this.deleteNote(id)}
+        updateEditing={(editing) => this.updateEditing(editing, id)}
+        updatePosition={(x, y) => this.updatePosition(x, y, id)}
+        updateContent={(text) => this.updateContent(text, id)}
+      />);
     });
   }
 
